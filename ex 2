@@ -1,0 +1,22 @@
+#include <iostream>
+#include <iomanip>
+
+int main() {
+    int num;
+    long long bigNum;
+    char letter;
+    float decimal;
+    double largeDecimal;
+
+    // Taking input
+    std::cin >> num >> bigNum >> letter >> decimal >> largeDecimal;
+
+    // Printing output in the expected format
+    std::cout << num << std::endl;
+    std::cout << bigNum << std::endl;
+    std::cout << letter << std::endl;
+    std::cout << std::fixed << std::setprecision(3) << decimal << std::endl;
+    std::cout << std::fixed << std::setprecision(9) << largeDecimal << std::endl;
+
+    return 0;
+}
