@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_N 100000 // Maximum string length
+
+/*
+ * Function to compute the string similarity using the Z-algorithm.
+ */
+long long stringSimilarity(char* s) {
+    int n = strlen(s);
+    int z[MAX_N]; // Use a fixed array instead of dynamic allocation
+    memset(z, 0, sizeof(z)); // Ensure Z array is initialized to 0
+
+    int left = 0, right = 0;
+    long long total_similarity = n; // The full string contributes n
+
+    for (int i = 1; i < n; i++) {
+        if (i <= right) {
+            z[i] = (right - i + 1 < z[i - left]) ? right - i + 1 : z[i - left];
+        }
+        
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) {
+            z[i]++;
+        }
+        
+        if (i + z[i] - 1 > right) {
+            left = i;
+            right = i + z[i] - 1;
+        }
+
+        total_similarity += z[i];
+    }
+
+    return total_similarity;
+}
+
+int main() {
+    int t;
+    scanf("%d", &t); // Read the number of test cases
+
+    while (t--) {
+        char s[MAX_N + 1]; // String input (max length +1 for null terminator)
+        scanf("%s", s); // Read input string
+
+        long long result = stringSimilarity(s);
+        printf("%lld\n", result); // Print the result
+    }
+
+    return 0;
+}
