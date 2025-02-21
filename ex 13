@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+void calculate_the_maximum(int n, int k) {
+    int max_and = 0, max_or = 0, max_xor = 0;
+    
+    for (int A = 1; A < n; A++) {
+        for (int B = A + 1; B <= n; B++) {
+            int and_result = A & B;
+            int or_result = A | B;
+            int xor_result = A ^ B;
+            
+            if (and_result < k && and_result > max_and) {
+                max_and = and_result;
+            }
+            if (or_result < k && or_result > max_or) {
+                max_or = or_result;
+            }
+            if (xor_result < k && xor_result > max_xor) {
+                max_xor = xor_result;
+            }
+        }
+    }
+    
+    printf("%d\n", max_and);
+    printf("%d\n", max_or);
+    printf("%d\n", max_xor);
+}
+
+int main() {
+    int n, k;
+    scanf("%d %d", &n, &k);
+    calculate_the_maximum(n, k);
+    return 0;
+}
