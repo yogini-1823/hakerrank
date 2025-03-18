@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int howManyGames(int p, int d, int m, int s) {
+    int count = 0;
+    while (s >= p) {
+        s -= p;
+        count++;
+        if (p - d >= m) {
+            p -= d;
+        } else {
+            p = m;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int p, d, m, s;
+    scanf("%d %d %d %d", &p, &d, &m, &s);
+    
+    int answer = howManyGames(p, d, m, s);
+    printf("%d\n", answer);
+    
+    return 0;
+}
