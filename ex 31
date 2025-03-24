@@ -1,0 +1,118 @@
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+int parse_int(char*);
+
+typedef struct Stack {
+    int* data;
+    int* max_data;
+    int top;
+    int capacity;
+} Stack;
+
+void push(Stack* stack, int value) {
+    if (stack->top == stack->capacity - 1) {
+        stack->capacity *= 2;
+        stack->data = realloc(stack->data, stack->capacity * sizeof(int));
+        stack->max_data = realloc(stack->max_data, stack->capacity * sizeof(int));
+    }
+    stack->data[++stack->top] = value;
+    if (stack->top == 0 || value > stack->max_data[stack->top - 1]) {
+        stack->max_data[stack->top] = value;
+    } else {
+        stack->max_data[stack->top] = stack->max_data[stack->top - 1];
+    }
+}
+
+void pop(Stack* stack) {
+    if (stack->top >= 0) {
+        stack->top--;
+    }
+}
+
+int get_max(Stack* stack) {
+    if (stack->top >= 0) {
+        return stack->max_data[stack->top];
+    }
+    return INT_MIN;
+}
+
+int* getMax(int operations_count, char** operations, int* result_count) {
+    Stack stack;
+    stack.data = malloc(operations_count * sizeof(int));
+    stack.max_data = malloc(operations_count * sizeof(int));
+    stack.top = -1;
+    stack.capacity = operations_count;
+    
+    int* result = malloc(operations_count * sizeof(int));
+    *result_count = 0;
+    
+    for (int i = 0; i < operations_count; i++) {
+        if (operations[i][0] == '1') {
+            int value = parse_int(operations[i] + 2);
+            push(&stack, value);
+        } else if (operations[i][0] == '2') {
+            pop(&stack);
+        } else if (operations[i][0] == '3') {
+            result[(*result_count)++] = get_max(&stack);
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    int n = parse_int(ltrim(rtrim(readline())));
+    char** ops = malloc(n * sizeof(char*));
+
+    for (int i = 0; i < n; i++) {
+        ops[i] = readline();
+    }
+
+    int res_count;
+    int* res = getMax(n, ops, &res_count);
+
+    for (int i = 0; i < res_count; i++) {
+        fprintf(fptr, "%d\n", res[i]);
+    }
+
+    fclose(fptr);
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    char* data = malloc(alloc_length);
+    fgets(data, alloc_length, stdin);
+    data[strcspn(data, "\n")] = 0;
+    return data;
+}
+
+char* ltrim(char* str) {
+    while (*str && isspace(*str)) str++;
+    return str;
+}
+
+char* rtrim(char* str) {
+    char* end = str + strlen(str) - 1;
+    while (end > str && isspace(*end)) end--;
+    *(end + 1) = '\0';
+    return str;
+}
+
+int parse_int(char* str) {
+    return strtol(str, NULL, 10);
+}
